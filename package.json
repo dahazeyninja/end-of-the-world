@@ -1,0 +1,22 @@
+{
+  "name": "end-of-the-world",
+  "version": "1.0.0",
+  "description": "A christmas event bot for a certain Owari no Seraph Discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dahazeyninja/end-of-the-world.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dahazeyninja/end-of-the-world/issues"
+  },
+  "homepage": "https://github.com/dahazeyninja/end-of-the-world#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
