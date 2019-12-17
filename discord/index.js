@@ -31,7 +31,7 @@ client.on('message', (message)=>{
 			console.log(`#${channel.name} set as event drop channel`);
 		}
 
-		messageChance();
+		messageChance(message);
 	}
 });
 
@@ -41,24 +41,19 @@ client.on('error', (error) => {
 
 client.login(config.token);
 
-let i = 0;
-const charityTimeout = function(){
-	return setTimeout(()=>{
-		console.log('test' + i);
-		i++;
-		charityTimeout();
-	}, 5000);
-};
+const charityInterval = setInterval(()=>{
+	console.log('test');
+	channel.send('RNGsus did not smile upon you, so have some charity');
+}, 600000);
 
-charityTimeout();
-
-function messageChance(){
+function messageChance(message){
 	const num = Math.random() * 100;
 
-	clearTimeout(charityTimeout);
+	charityInterval.refresh();
 
 	if (num <= config.chance){
-		console.log('RNGsus smiles upon you');
-		channel.send('RNGsus smiles upon you');
+		charityInterval.refresh();
+		// console.log('RNGsus smiles upon you');
+		channel.send('RNGsus smiles upon you ' + message.id);
 	}
 }
