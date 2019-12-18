@@ -43,7 +43,7 @@ client.login(config.token);
 
 const charityInterval = setInterval(()=>{
 	channel.send('RNGsus did not smile upon you, so have some charity');
-}, 600000);
+}, config.charity * 60 * 1000);
 
 function messageChance(message){
 	const num = Math.random() * 100;
