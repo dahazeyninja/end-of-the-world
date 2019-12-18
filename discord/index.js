@@ -94,7 +94,7 @@ function claimEvent(reaction, user){
 			return;
 		}
 
-		db.run('UPDATE `messages` SET claimed = 1 WHERE id = ?;' [message.id], function(err){
+		db.run('UPDATE `messages` SET claimed = 1 WHERE id = ?;', [message.id], function(err){
 			if(err){
 				console.error(err);
 			}
