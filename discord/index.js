@@ -1,4 +1,5 @@
 const config = require('../config.json');
+const chance = require('./chance.js');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -13,6 +14,9 @@ let channel;
 client.on('ready', () => {
 	console.log('[Discord Bot] Ready!');
 	// client.user.setActivity('you', {type: 'PLAYING'});
+
+	channel = client.channels.find(ch => ch.id === config.channel);
+	console.log(`#${channel.name} set as event drop channel`);
 });
 
 client.on('message', (message)=>{
@@ -26,11 +30,6 @@ client.on('message', (message)=>{
 	}
 
 	if (message.guild.id === config.server){
-		if (!channel){
-			channel = message.guild.channels.find(ch => ch.id === config.channel);
-			console.log(`#${channel.name} set as event drop channel`);
-		}
-
 		messageChance(message);
 	}
 });
@@ -50,7 +49,6 @@ function messageChance(message){
 
 	if (num <= config.chance){
 		charityInterval.refresh();
-		// console.log('RNGsus smiles upon you');
 		channel.send('RNGsus smiles upon you ' + message.id);
 	}
 }
