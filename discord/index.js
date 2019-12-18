@@ -3,12 +3,12 @@ const config = require('../config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database('database.db');
+
 const cmds = {};
 
 let channel;
-
-const sqlite3 = require('sqlite3');
-const db = new sqlite3.Database('database.db');
 
 client.on('ready', () => {
 	console.log('[Discord Bot] Ready!');
