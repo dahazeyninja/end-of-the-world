@@ -1,0 +1,7 @@
+{
+	"token": "discord bot user token goes here",
+	"server": "server ID goes here",
+	"channel": "channel ID goes here",
+	"chance": 10, // percent chance for an event drop to occur
+	"charity": 15 // timeout to automatically trigger an event drop in minutes
+}
