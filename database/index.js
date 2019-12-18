@@ -13,7 +13,7 @@ db.serialize(function(){
 		}
 	});
 
-	console.log('[Database] Points DB Ready!');
+	console.log('[Database] DB Ready!');
 	db.close();
 
 });
