@@ -1,5 +1,4 @@
 const config = require('../config.json');
-const chance = require('./chance.js');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -8,8 +7,8 @@ const cmds = {};
 
 let channel;
 
-//const sqlite3 = require('sqlite3');
-//const db = new sqlite3.Database('database.db');
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database('database.db');
 
 client.on('ready', () => {
 	console.log('[Discord Bot] Ready!');
@@ -20,7 +19,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (message)=>{
-	if (!message.guild){
+	if (!message.guild || message.author.bot){
 		return;
 	}
 	const cmd = message.content.split(' ', 1)[0];
@@ -34,6 +33,15 @@ client.on('message', (message)=>{
 	}
 });
 
+client.on('messageReactionAdd', (reaction, user) => {
+	if (!reaction.message.guild || user.bot){
+		return;
+	}
+	if (reaction.message.guild.id === config.server){
+		claimEvent(reaction, user);
+	}
+});
+
 client.on('error', (error) => {
 	console.error(error);
 });
@@ -41,14 +49,70 @@ client.on('error', (error) => {
 client.login(config.token);
 
 const charityInterval = setInterval(()=>{
-	channel.send('RNGsus did not smile upon you, so have some charity');
+	sendEvent();
 }, config.charity * 60 * 1000);
 
 function messageChance(message){
 	const num = Math.random() * 100;
 
+	if (message.channel.id === 341725276679438339 && num <= 5){
+		charityInterval.refresh();
+		sendEvent(message);
+	}
+
 	if (num <= config.chance){
 		charityInterval.refresh();
-		channel.send('RNGsus smiles upon you ' + message.id);
+		sendEvent(message);
 	}
+}
+
+function sendEvent(message){
+	channel.send(`A Vampire has appeared in #${message.channel.name}. React to kill it!`).then((sentMessage)=>{
+		db.run('INSERT INTO `messages` (id, claimed) VALUES (?,0);', [sentMessage.id], function(err){
+			if(err && err.message === 'SQLITE_CONSTRAINT: UNIQUE constraint failed: messages.id'){
+				return;
+			} else if (err){
+				console.log(err);
+			}
+		});	
+		sentMessage.react('⚔️');
+	});
+}
+
+function claimEvent(reaction, user){
+	const {count, emoji, message} = reaction;
+
+	if (emoji.name !== '⚔️' || count > 2){
+		return;
+	}
+
+	db.get('SELECT * FROM `messages` WHERE id = ?;', [message.id], function(err,row){
+		if(err){
+			console.error(err);
+		}
+		if(!row || row.claimed === 1){
+			return;
+		}
+
+		db.run('UPDATE `messages` SET claimed = 1 WHERE id = ?;' [message.id], function(err){
+			if(err){
+				console.error(err);
+			}
+		});
+
+		dbInsert(message, user);
+
+	});
+
+	
+}
+
+function dbInsert(message, user){
+	db.run('INSERT INTO `points` (messageid, userid, points) VALUES (?,?,1);',[message.id, user.id], function(err){
+		if(err && err.message === 'SQLITE_CONSTRAINT: UNIQUE constraint failed: points.messageid'){
+			return;
+		} else if (err){
+			console.log(err);
+		}
+	});
 }
