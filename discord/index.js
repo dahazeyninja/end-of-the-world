@@ -42,14 +42,11 @@ client.on('error', (error) => {
 client.login(config.token);
 
 const charityInterval = setInterval(()=>{
-	console.log('test');
 	channel.send('RNGsus did not smile upon you, so have some charity');
 }, 600000);
 
 function messageChance(message){
 	const num = Math.random() * 100;
-
-	charityInterval.refresh();
 
 	if (num <= config.chance){
 		charityInterval.refresh();
