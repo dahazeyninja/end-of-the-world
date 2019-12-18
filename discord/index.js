@@ -67,7 +67,13 @@ function messageChance(message){
 }
 
 function sendEvent(message){
-	channel.send(`A Vampire has appeared in #${message.channel.name}. React to kill it!`).then((sentMessage)=>{
+	let chname;
+	if (!message){
+		chname = 'nowhere, this is just a timeout that causes a drop if there hasnt been one for 15m';
+	} else {
+		chname = message.channel.name;
+	}
+	channel.send(`A Vampire has appeared in #${chname}. React to kill it!`).then((sentMessage)=>{
 		db.run('INSERT INTO `messages` (id, claimed) VALUES (?,0);', [sentMessage.id], function(err){
 			if(err && err.message === 'SQLITE_CONSTRAINT: UNIQUE constraint failed: messages.id'){
 				return;
