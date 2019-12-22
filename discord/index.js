@@ -6,6 +6,10 @@ const client = new Discord.Client();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('database.db');
 
+const cmds = {
+	'!leaderboard': (message) => leaderboard(message)
+};
+
 let channel;
 
 client.on('ready', () => {
@@ -25,7 +29,12 @@ client.on('message', (message)=>{
 		return;
 	}
 
+	const cmd = message.content.split(' ', 1)[0];
+
 	if (message.guild.id === config.server){
+		if (cmd in cmds) {
+			return cmds[cmd](message);
+		}
 		messageChance(message);
 	}
 });
@@ -114,4 +123,39 @@ function dbInsert(message, user){
 		}
 		// message.delete();
 	});
+}
+
+function leaderboard(message){
+	const richEmbed = {
+		color: 0xaa98ae,
+		title: 'Vampires Killed',
+		timestamp: Date.now()
+	};
+
+	db.all('SELECT userid, COUNT(points) as points from points GROUP BY userid;', function(err, rows){
+		if (err){
+			console.error(err);
+		}
+
+		const fields = [];
+
+		rows.forEach((row)=>{
+			const username = getUser(message, row.userid);
+			fields.push({
+				name: username,
+				value: row.points,
+				inline: false
+			});
+		});
+
+		richEmbed.fields = fields;
+
+		message.channel.send({embed: richEmbed});
+	});
+}
+
+function getUser(message, userid){
+	const user = message.guild.members.get(userid);
+	const username = `${user.displayName}`;
+	return username;
 }
