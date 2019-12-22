@@ -21,6 +21,10 @@ client.on('message', (message)=>{
 		return;
 	}
 
+	if (message.content.length <= 3){
+		return;
+	}
+
 	if (message.guild.id === config.server){
 		messageChance(message);
 	}
