@@ -6,8 +6,6 @@ const client = new Discord.Client();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('database.db');
 
-const cmds = {};
-
 let channel;
 
 client.on('ready', () => {
