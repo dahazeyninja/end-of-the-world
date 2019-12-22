@@ -19,13 +19,8 @@ client.on('ready', () => {
 });
 
 client.on('message', (message)=>{
-	if (!message.guild || message.author.bot){
+	if (!message.guild || message.author.bot || config.ignore_channels.includes(message.channel.id)){
 		return;
-	}
-	const cmd = message.content.split(' ', 1)[0];
-
-	if (cmd in cmds) {
-		cmds[cmd](message);
 	}
 
 	if (message.guild.id === config.server){
