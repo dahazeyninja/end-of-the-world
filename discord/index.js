@@ -52,11 +52,6 @@ const charityInterval = setInterval(()=>{
 function messageChance(message){
 	const num = Math.random() * 100;
 
-	if (message.channel.id === 341725276679438339 && num <= 5){
-		charityInterval.refresh();
-		sendEvent(message);
-	}
-
 	if (num <= config.chance){
 		charityInterval.refresh();
 		sendEvent(message);
@@ -117,5 +112,6 @@ function dbInsert(message, user){
 		} else if (err){
 			console.log(err);
 		}
+		message.delete();
 	});
 }
