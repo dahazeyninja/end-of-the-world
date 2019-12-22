@@ -112,6 +112,6 @@ function dbInsert(message, user){
 		} else if (err){
 			console.log(err);
 		}
-		message.delete();
+		// message.delete();
 	});
 }
