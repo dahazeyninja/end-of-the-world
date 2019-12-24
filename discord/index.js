@@ -83,6 +83,7 @@ function sendEvent(message){
 	if (!message){
 		chname = 'general, 15m timeout drop';
 		channel = default_channel;
+		console.log(`${getDate()}[Timeout Spawn]`);
 	} else {
 		chname = message.channel.name;
 		channel = message.channel;
@@ -97,6 +98,7 @@ function sendEvent(message){
 		});	
 		sentMessage.react('⚔️');
 		log_channel.send(`Spawned a vampire in #${chname}`);
+		console.log(`${getDate()}[Spawn] Spawned a vampire in #${chname}`);
 	});
 }
 
@@ -137,6 +139,7 @@ function dbInsert(message, user){
 		}
 		message.delete();
 		log_channel.send(`${user.tag} (${user.id}) killed a vampire in #${message.channel.name}`);
+		console.log(`${getDate()}[Claim] ${user.tag} (${user.id}) killed a vampire in #${message.channel.name}`);
 	});
 }
 
@@ -177,5 +180,10 @@ function getUser(message, userid){
 
 function forceSpawn(message){
 	sendEvent(message);
+	console.log(`${getDate()}[Forced Spawn] ${message.author.tag} forced a spawn in #${message.channel.name}`);
 	message.delete();
+}
+
+function getDate(){
+	return (new Date()).toISOString() + ' :: ';
 }
