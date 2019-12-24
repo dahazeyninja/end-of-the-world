@@ -1,5 +1,9 @@
 {
 	"token": "discord bot user token goes here",
+	"admins":[
+		"admin user ID goes here",
+		"etc"
+	],
 	"server": "server ID goes here",
 	"default_channel": "default drop channel ID goes here",
 	"ignore_channels": [

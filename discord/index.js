@@ -6,6 +6,9 @@ const client = new Discord.Client();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('database.db');
 
+const admincmds = {
+	'!spawn': (message)=> forceSpawn(message)
+};
 const cmds = {
 	'!leaderboard': (message) => leaderboard(message)
 };
@@ -36,6 +39,9 @@ client.on('message', (message)=>{
 	const cmd = message.content.split(' ', 1)[0];
 
 	if (message.guild.id === config.server){
+		if (cmd in admincmds && config.admins.indexOf(message.author.id) > -1) {
+			admincmds[cmd](message);
+		}
 		if (cmd in cmds) {
 			return cmds[cmd](message);
 		}
@@ -167,4 +173,9 @@ function getUser(message, userid){
 	const user = message.guild.members.get(userid);
 	const username = `${user.displayName}`;
 	return username;
+}
+
+function forceSpawn(message){
+	sendEvent(message);
+	message.delete();
 }
