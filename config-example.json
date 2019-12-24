@@ -1,12 +1,13 @@
 {
 	"token": "discord bot user token goes here",
 	"server": "server ID goes here",
-	"channel": "channel ID goes here",
+	"default_channel": "default drop channel ID goes here",
 	"ignore_channels": [
 		"channel ID to ignore",
 		"channel ID to ignore",
 		"etc"
 	],
+	"log_channel": "logging channel ID goes here",
 	"chance": 10, // percent chance for an event drop to occur
 	"charity": 15 // timeout to automatically trigger an event drop in minutes
 }
