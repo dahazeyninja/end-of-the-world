@@ -10,14 +10,18 @@ const cmds = {
 	'!leaderboard': (message) => leaderboard(message)
 };
 
-let channel;
+let default_channel;
+let log_channel;
 
 client.on('ready', () => {
 	console.log('[Discord Bot] Ready!');
 	// client.user.setActivity('you', {type: 'PLAYING'});
 
-	channel = client.channels.find(ch => ch.id === config.channel);
-	console.log(`#${channel.name} set as event drop channel`);
+	default_channel = client.channels.find(ch => ch.id === config.default_channel);
+	console.log(`#${default_channel.name} set as default drop channel`);
+	log_channel = client.channels.find(ch => ch.id === config.log_channel);
+	console.log(`#${log_channel.name} set as log channel`);
+
 });
 
 client.on('message', (message)=>{
@@ -60,6 +64,7 @@ const charityInterval = setInterval(()=>{
 
 function messageChance(message){
 	const num = Math.random() * 100;
+	// console.log(num);
 
 	if (num <= config.chance){
 		charityInterval.refresh();
@@ -68,13 +73,15 @@ function messageChance(message){
 }
 
 function sendEvent(message){
-	let chname;
+	let channel, chname;
 	if (!message){
-		chname = 'nowhere, this is just a timeout that causes a drop if there hasnt been one for 15m';
+		chname = 'general, 15m timeout drop';
+		channel = default_channel;
 	} else {
 		chname = message.channel.name;
+		channel = message.channel;
 	}
-	channel.send(`A Vampire has appeared in #${chname}. React to kill it!`).then((sentMessage)=>{
+	channel.send('A Vampire has appeared!. React to kill it!').then((sentMessage)=>{
 		db.run('INSERT INTO `messages` (id, claimed) VALUES (?,0);', [sentMessage.id], function(err){
 			if(err && err.message === 'SQLITE_CONSTRAINT: UNIQUE constraint failed: messages.id'){
 				return;
@@ -83,6 +90,7 @@ function sendEvent(message){
 			}
 		});	
 		sentMessage.react('⚔️');
+		log_channel.send(`Spawned a vampire in #${chname}`);
 	});
 }
 
@@ -121,7 +129,8 @@ function dbInsert(message, user){
 		} else if (err){
 			console.log(err);
 		}
-		// message.delete();
+		message.delete();
+		log_channel.send(`${user.tag} (${user.id}) killed a vampire in #${message.channel.name}`);
 	});
 }
 
@@ -132,7 +141,7 @@ function leaderboard(message){
 		timestamp: Date.now()
 	};
 
-	db.all('SELECT userid, COUNT(points) as points from points GROUP BY userid;', function(err, rows){
+	db.all('SELECT userid, COUNT(points) as points from points GROUP BY userid ORDER BY points DESC;', function(err, rows){
 		if (err){
 			console.error(err);
 		}
