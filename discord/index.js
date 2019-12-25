@@ -36,7 +36,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (message)=>{
-	if (!message.guild || message.author.bot || config.ignore_channels.includes(message.channel.id)){
+	if (!message.guild || message.author.bot){
 		return;
 	}
 
@@ -50,8 +50,11 @@ client.on('message', (message)=>{
 		if (cmd in admincmds && config.admins.indexOf(message.author.id) > -1) {
 			return admincmds[cmd](message);
 		}
-		if (cmd in cmds && message.channel.id === command_channel.id) {
+		if (cmd in cmds && message.channel.id === config.command_channel) {
 			return cmds[cmd](message);
+		}
+		if (config.ignore_channels.includes(message.channel.id)){
+			return;
 		}
 		messageChance(message);
 	}
