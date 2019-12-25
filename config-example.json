@@ -13,5 +13,6 @@
 	],
 	"log_channel": "logging channel ID goes here",
 	"chance": 10, // percent chance for an event drop to occur
-	"charity": 15 // timeout to automatically trigger an event drop in minutes
+	"charity": 15, // timeout to automatically trigger an event drop in minutes
+	"claim_timeout": 60 // timeout in seconds to prevent a user from claiming again after they have claimed
 }

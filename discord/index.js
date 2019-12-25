@@ -13,6 +13,8 @@ const cmds = {
 	'!leaderboard': (message) => leaderboard(message)
 };
 
+const recents = {};
+
 let default_channel;
 let log_channel;
 
@@ -105,7 +107,12 @@ function sendEvent(message){
 function claimEvent(reaction, user){
 	const {count, emoji, message} = reaction;
 
-	if (emoji.name !== '⚔️' || count > 2){
+	if (recents[user.id] && Date.now() - recents[user.id] < config.claim_timeout * 1000){
+		reaction.remove();
+		return;
+	}
+
+	if (emoji.name !== '⚔️'/* || count > 2*/){
 		return;
 	}
 
@@ -138,6 +145,7 @@ function dbInsert(message, user){
 			console.log(err);
 		}
 		message.delete();
+		recents[user.id] = Date.now();
 		log_channel.send(`${user.tag} (${user.id}) killed a vampire in #${message.channel.name}`);
 		console.log(`${getDate()}[Claim] ${user.tag} (${user.id}) killed a vampire in #${message.channel.name}`);
 	});
