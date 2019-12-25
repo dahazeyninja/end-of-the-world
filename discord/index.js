@@ -17,6 +17,7 @@ const recents = {};
 
 let default_channel;
 let log_channel;
+let command_channel;
 
 client.on('ready', () => {
 	console.log('[Discord Bot] Ready!');
@@ -26,6 +27,8 @@ client.on('ready', () => {
 	console.log(`#${default_channel.name} set as default drop channel`);
 	log_channel = client.channels.find(ch => ch.id === config.log_channel);
 	console.log(`#${log_channel.name} set as log channel`);
+	command_channel = client.channels.find(ch => ch.id === config.command_channel);
+	console.log(`#${command_channel.name} set as command channel`);
 
 });
 
@@ -44,7 +47,7 @@ client.on('message', (message)=>{
 		if (cmd in admincmds && config.admins.indexOf(message.author.id) > -1) {
 			admincmds[cmd](message);
 		}
-		if (cmd in cmds) {
+		if (cmd in cmds && message.channel.id === command_channel.id) {
 			return cmds[cmd](message);
 		}
 		messageChance(message);
