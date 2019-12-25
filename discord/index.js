@@ -7,10 +7,13 @@ const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database('database.db');
 
 const admincmds = {
+	'!leaderboard': (message) => leaderboard(message),
+	'!mypoints': (message) => myPoints(message),
 	'!spawn': (message)=> forceSpawn(message)
 };
 const cmds = {
-	'!leaderboard': (message) => leaderboard(message)
+	'!leaderboard': (message) => leaderboard(message),
+	'!mypoints': (message) => myPoints(message)
 };
 
 const recents = {};
@@ -45,7 +48,7 @@ client.on('message', (message)=>{
 
 	if (message.guild.id === config.server){
 		if (cmd in admincmds && config.admins.indexOf(message.author.id) > -1) {
-			admincmds[cmd](message);
+			return admincmds[cmd](message);
 		}
 		if (cmd in cmds && message.channel.id === command_channel.id) {
 			return cmds[cmd](message);
@@ -178,6 +181,30 @@ function leaderboard(message){
 		});
 
 		richEmbed.fields = fields;
+
+		message.channel.send({embed: richEmbed});
+	});
+}
+
+function myPoints(message){
+	const richEmbed = {
+		color: 0xaa98ae,
+		title: 'Vampires Killed',
+		timestamp: Date.now()
+	};
+
+	db.get('SELECT userid, COUNT(points) as points from points WHERE userid = ?;',[message.author.id], function(err, row){
+		if (err){
+			console.error(err);
+		}
+
+		const username = getUser(message, row.userid);
+
+		richEmbed.fields = [{
+			name: username,
+			value: row.points,
+			inline: false
+		}];
 
 		message.channel.send({embed: richEmbed});
 	});
