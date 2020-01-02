@@ -215,7 +215,13 @@ function myPoints(message){
 
 function getUser(message, userid){
 	const user = message.guild.members.get(userid);
-	const username = `${user.displayName}`;
+	let username;
+	if (user){
+		username = `${user.displayName}`;
+	} else {
+		username = 'User Left Server';
+	}
+	
 	return username;
 }
 
